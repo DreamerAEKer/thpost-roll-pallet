@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบรับงาน Roll Pallet - แผนกลูกค้าธุรกิจ ปณ.กลาง</title>
+  <title>ระบบรับงาน Pallet - แผนกลูกค้าธุรกิจ ปณ.กลาง</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,7 +48,7 @@
           THAILAND POST
         </div>
         <div>
-          <h1 class="font-bold text-base sm:text-lg leading-tight">ระบบรับงานและคำนวณไปรษณีย์ภัณฑ์ (Roll Pallet)</h1>
+          <h1 class="font-bold text-base sm:text-lg leading-tight">ระบบรับงานและคำนวณไปรษณีย์ภัณฑ์ (Pallet)</h1>
           <p class="text-xs text-red-100">แผนกลูกค้าธุรกิจ ปณ.กลาง • อัตราค่าบริการใหม่ (เริ่ม 1 ม.ค. 68)</p>
         </div>
       </div>
@@ -178,12 +178,12 @@
           </div>
         </div>
 
-        <!-- Card 3: ตัวช่วยนับจำนวนบน Roll Pallet -->
+        <!-- Card 3: ตัวช่วยนับจำนวนบน Pallet -->
         <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-[var(--border)]">
             <h2 class="font-bold text-base flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-[#ED1C24] inline-block"></span>
-              3. นับจำนวนงานบน Roll Pallet
+              3. นับจำนวนงานบนพาเลท (Pallet)
             </h2>
             <div class="flex items-center gap-1.5 text-xs">
               <span class="text-[var(--muted-foreground)]">ตั้งค่ามัดด่วน:</span>
@@ -194,7 +194,7 @@
             </div>
           </div>
 
-          <!-- Main Roll Formula Inputs -->
+          <!-- Main Pallet Formula Inputs -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-4">
             <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
               <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 มัด มีกี่ฉบับ?</label>
@@ -205,24 +205,24 @@
             </div>
 
             <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
-              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 โรล มีกี่มัด?</label>
+              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 พาเลท มีกี่มัด?</label>
               <div class="flex items-center gap-2">
                 <input type="number" id="bundles-per-roll" value="50" min="0" oninput="calculateAll()" class="w-full px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
                 <span class="text-xs text-[var(--muted-foreground)]">มัด</span>
               </div>
               <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">
-                (= <span id="items-per-roll-preview" class="font-semibold text-[var(--foreground)]">5,000</span> ฉบับ/โรล)
+                (= <span id="items-per-roll-preview" class="font-semibold text-[var(--foreground)]">5,000</span> ฉบับ/พาเลท)
               </div>
             </div>
 
             <div class="p-3 rounded-xl bg-red-500/5 border-2 border-[#ED1C24]/40">
-              <label class="block text-xs font-semibold text-[#ED1C24] mb-1">จำนวนกี่โรล (เต็ม)?</label>
+              <label class="block text-xs font-semibold text-[#ED1C24] mb-1">จำนวนกี่พาเลท (เต็ม)?</label>
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="stepValue('total-rolls', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold hover:bg-red-500/10">-</button>
                 <input type="number" id="total-rolls" value="1" min="0" oninput="calculateAll()" class="w-full px-2 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
                 <button type="button" onclick="stepValue('total-rolls', 1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold hover:bg-red-500/10">+</button>
               </div>
-              <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">โรลพาเลท</div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">พาเลท (Pallet)</div>
             </div>
           </div>
 
@@ -230,7 +230,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)]">
             <div>
               <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">
-                เศษมัด (มัดที่เหลือไม่เต็มโรล)
+                เศษมัด (มัดที่เหลือไม่เต็มพาเลท)
               </label>
               <div class="flex items-center gap-2">
                 <button type="button" onclick="stepValue('extra-bundles', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">-</button>
@@ -262,7 +262,7 @@
           <!-- Note Input -->
           <div class="mt-4">
             <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">หมายเหตุ / รายละเอียดเพิ่มเติม</label>
-            <textarea id="job-note" rows="2" placeholder="เช่น โรลที่ 4 มีมัดคละน้ำหนัก, รอใบนำส่งตัวจริง, เลขที่ใบรับฝาก..." class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]"></textarea>
+            <textarea id="job-note" rows="2" placeholder="เช่น พาเลทที่ 4 มีมัดคละน้ำหนัก, รอใบนำส่งตัวจริง, เลขที่ใบรับฝาก..." class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]"></textarea>
           </div>
         </div>
 
@@ -287,7 +287,7 @@
           <!-- Breakdown Table -->
           <div class="space-y-2.5 text-sm mb-4">
             <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
-              <span class="text-[var(--muted-foreground)]">จากโรลเต็ม (<span id="sum-rolls-txt">1 โรล × 50 มัด × 100</span>)</span>
+              <span class="text-[var(--muted-foreground)]">จากพาเลทเต็ม (<span id="sum-rolls-txt">1 พาเลท × 50 มัด × 100</span>)</span>
               <span class="font-bold"><span id="sum-rolls-items">5,000</span> ฉบับ</span>
             </div>
             <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
@@ -373,8 +373,8 @@
             <div class="text-xl font-black mt-0.5"><span id="hist-stat-count">0</span> รายการ</div>
           </div>
           <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
-            <div class="text-xs text-[var(--muted-foreground)]">รวมจำนวนโรล</div>
-            <div class="text-xl font-black mt-0.5"><span id="hist-stat-rolls">0</span> โรล</div>
+            <div class="text-xs text-[var(--muted-foreground)]">รวมจำนวนพาเลท</div>
+            <div class="text-xl font-black mt-0.5"><span id="hist-stat-rolls">0</span> พาเลท</div>
           </div>
           <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
             <div class="text-xs text-[var(--muted-foreground)]">รวมจำนวนชิ้นงานทั้งหมด</div>
@@ -485,7 +485,7 @@
       <div class="border-b-2 border-red-600 pb-3 mb-4 flex justify-between items-start">
         <div>
           <div class="text-xs font-bold text-red-600 uppercase">บริษัท ไปรษณีย์ไทย จำกัด</div>
-          <h3 class="text-lg font-black">ใบสรุปการรับงาน (Roll Pallet)</h3>
+          <h3 class="text-lg font-black">ใบสรุปการรับงาน (Pallet)</h3>
           <p class="text-xs text-gray-600">แผนกลูกค้าธุรกิจ ปณ.กลาง</p>
         </div>
         <div class="text-right text-xs text-gray-600">
@@ -700,7 +700,7 @@
       document.getElementById('summary-service-title').textContent = c.serviceName;
       document.getElementById('summary-unit-price').textContent = c.unitPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-      document.getElementById('sum-rolls-txt').textContent = `${c.totalRolls} โรล × ${c.bundlesPerRoll} มัด × ${c.itemsPerBundle}`;
+      document.getElementById('sum-rolls-txt').textContent = `${c.totalRolls} พาเลท × ${c.bundlesPerRoll} มัด × ${c.itemsPerBundle}`;
       document.getElementById('sum-rolls-items').textContent = c.itemsFromRolls.toLocaleString();
 
       document.getElementById('sum-extrabundles-txt').textContent = `${c.extraBundles} มัด × ${c.itemsPerBundle}`;
@@ -813,7 +813,7 @@
               <span>⚖️ พิกัด: <strong class="text-[var(--foreground)]">${escapeHtml(r.tierLabel)}</strong></span>
             </div>
             <div class="text-xs bg-[var(--card)] px-3 py-1.5 rounded-lg border border-[var(--border)] inline-block">
-              📦 <strong>${r.totalRolls}</strong> โรล (${r.bundlesPerRoll} มัด/โรล × ${r.itemsPerBundle} ฉบับ)
+              📦 <strong>${r.totalRolls}</strong> พาเลท (${r.bundlesPerRoll} มัด/พาเลท × ${r.itemsPerBundle} ฉบับ)
               + เศษมัด <strong>${r.extraBundles}</strong> มัด
               + เศษปลีก <strong>${r.looseItems}</strong> ฉบับ
             </div>
@@ -887,15 +887,15 @@
         <table class="w-full text-xs border-collapse border border-gray-300 mt-2">
           <thead>
             <tr class="bg-gray-200">
-              <th class="border border-gray-300 p-2 text-left">รายการนับบน Roll Pallet</th>
+              <th class="border border-gray-300 p-2 text-left">รายการนับบนพาเลท (Pallet)</th>
               <th class="border border-gray-300 p-2 text-right">วิธีคำนวณ</th>
               <th class="border border-gray-300 p-2 text-right">จำนวน (ฉบับ)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="border border-gray-300 p-2">จำนวนโรลเต็ม (${r.totalRolls} โรล)</td>
-              <td class="border border-gray-300 p-2 text-right">${r.totalRolls} โรล × ${r.bundlesPerRoll} มัด × ${r.itemsPerBundle} ฉบับ</td>
+              <td class="border border-gray-300 p-2">จำนวนพาเลทเต็ม (${r.totalRolls} พาเลท)</td>
+              <td class="border border-gray-300 p-2 text-right">${r.totalRolls} พาเลท × ${r.bundlesPerRoll} มัด × ${r.itemsPerBundle} ฉบับ</td>
               <td class="border border-gray-300 p-2 text-right font-bold">${r.itemsFromRolls.toLocaleString()}</td>
             </tr>
             <tr>
@@ -939,7 +939,7 @@
       const headers = [
         'รหัสรายการ', 'วันที่', 'เวลา', 'ชื่อลูกค้า/บริษัท', 'ผู้ประสานงาน', 'ผู้รับงาน(ปณ.กลาง)',
         'ประเภทบริการ', 'พิกัดน้ำหนัก', 'ราคาต่อชิ้น(บาท)',
-        'ฉบับต่อมัด', 'มัดต่อโรล', 'จำนวนโรลเต็ม', 'เศษมัด', 'เศษฉบับปลีก',
+        'ฉบับต่อมัด', 'มัดต่อพาเลท', 'จำนวนพาเลทเต็ม', 'เศษมัด', 'เศษฉบับปลีก',
         'รวมจำนวนฉบับทั้งสิ้น', 'รวมค่าบริการ(บาท)', 'หมายเหตุ'
       ];
 
