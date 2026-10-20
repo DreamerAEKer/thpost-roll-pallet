@@ -44,23 +44,24 @@
   <header class="bg-[#ED1C24] text-white shadow-md sticky top-0 z-20 no-print">
     <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="bg-white text-[#ED1C24] font-black rounded-lg px-2.5 py-1.5 text-lg tracking-tight shadow-sm">
-          THAILAND POST
+        <div class="bg-white text-[#ED1C24] font-black rounded-lg px-2.5 py-1.5 text-lg tracking-tight shadow-sm leading-none text-center">
+          <div>THAILAND</div>
+          <div class="text-sm">POST</div>
         </div>
         <div>
           <h1 class="font-bold text-base sm:text-lg leading-tight">ระบบรับงานและคำนวณไปรษณีย์ภัณฑ์ (Pallet)</h1>
           <p class="text-xs text-red-100">แผนกลูกค้าธุรกิจ ปณ.กลาง • อัตราค่าบริการใหม่ (เริ่ม 1 ม.ค. 68)</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="switchTab('form')" id="tab-btn-form" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-[#ED1C24] shadow-sm transition">
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+        <button onclick="switchTab('form')" id="tab-btn-form" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-[#ED1C24] shadow-sm transition">
           + บันทึกรับงาน
         </button>
-        <button onclick="switchTab('history')" id="tab-btn-history" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition flex items-center gap-1.5">
+        <button onclick="switchTab('history')" id="tab-btn-history" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition flex items-center gap-1.5">
           <span>ประวัติงานที่บันทึก</span>
           <span id="history-badge" class="bg-white text-[#ED1C24] px-1.5 py-0.2 rounded-full text-xs font-bold">0</span>
         </button>
-        <button onclick="switchTab('rates')" id="tab-btn-rates" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition">
+        <button onclick="switchTab('rates')" id="tab-btn-rates" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition">
           ตารางเรทราคา
         </button>
         <button onclick="toggleTheme()" id="theme-btn" title="สลับโหมดมืด/สว่าง" class="p-1.5 rounded-lg bg-red-700/60 text-white hover:bg-red-700 transition">
@@ -178,59 +179,112 @@
           </div>
         </div>
 
-        <!-- Card 3: ตัวช่วยนับจำนวนบน Pallet -->
-        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-[var(--border)]">
-            <h2 class="font-bold text-base flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#ED1C24] inline-block"></span>
-              3. นับจำนวนงานบนพาเลท (Pallet)
-            </h2>
-            <div class="flex items-center gap-1.5 text-xs">
-              <span class="text-[var(--muted-foreground)]">ตั้งค่ามัดด่วน:</span>
-              <button type="button" onclick="setQuickBundle(50)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">50</button>
-              <button type="button" onclick="setQuickBundle(100)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">100</button>
-              <button type="button" onclick="setQuickBundle(200)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">200</button>
-              <button type="button" onclick="setQuickBundle(500)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">500</button>
+        <!-- Card 3: ตัวช่วยนับจำนวนบน Pallet แบบละเอียด (มีชั้นวาง + พาเลทแยก) -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-[var(--border)]">
+            <div>
+              <h2 class="font-bold text-base flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#ED1C24] inline-block"></span>
+                3. นับจำนวนงานบนพาเลท (รองรับชั้นวาง & พาเลทไม่เท่ากัน)
+              </h2>
+              <p class="text-xs text-[var(--muted-foreground)] mt-0.5">ตั้งค่าชั้นวางของพาเลทหลัก และกด "+ เพิ่มพาเลทที่ไม่เท่ากัน" ได้ตามจริง</p>
             </div>
           </div>
 
-          <!-- Main Pallet Formula Inputs -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-4">
-            <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
-              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 มัด มีกี่ฉบับ?</label>
-              <div class="flex items-center gap-2">
-                <input type="number" id="items-per-bundle" value="100" min="0" oninput="calculateAll()" class="w-full px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
-                <span class="text-xs text-[var(--muted-foreground)]">ฉบับ</span>
+          <!-- 3.1 มาตรฐานต่อ 1 มัด -->
+          <div class="p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <label class="block text-sm font-bold">1 มัด มีกี่ฉบับ? (ค่ามาตรฐาน)</label>
+              <div class="flex flex-wrap items-center gap-1.5 mt-1 text-xs">
+                <span class="text-[var(--muted-foreground)]">เลือกด่วน:</span>
+                <button type="button" onclick="setQuickBundle(10)" class="px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--card)] hover:border-[#ED1C24] font-semibold">10</button>
+                <button type="button" onclick="setQuickBundle(20)" class="px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--card)] hover:border-[#ED1C24] font-semibold">20</button>
+                <button type="button" onclick="setQuickBundle(50)" class="px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--card)] hover:border-[#ED1C24] font-semibold">50</button>
+                <button type="button" onclick="setQuickBundle(100)" class="px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--card)] hover:border-[#ED1C24] font-semibold">100</button>
+                <button type="button" onclick="setQuickBundle(200)" class="px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--card)] hover:border-[#ED1C24] font-semibold">200</button>
               </div>
             </div>
-
-            <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
-              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 พาเลท มีกี่มัด?</label>
-              <div class="flex items-center gap-2">
-                <input type="number" id="bundles-per-roll" value="50" min="0" oninput="calculateAll()" class="w-full px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
-                <span class="text-xs text-[var(--muted-foreground)]">มัด</span>
-              </div>
-              <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">
-                (= <span id="items-per-roll-preview" class="font-semibold text-[var(--foreground)]">5,000</span> ฉบับ/พาเลท)
-              </div>
-            </div>
-
-            <div class="p-3 rounded-xl bg-red-500/5 border-2 border-[#ED1C24]/40">
-              <label class="block text-xs font-semibold text-[#ED1C24] mb-1">จำนวนกี่พาเลท (เต็ม)?</label>
-              <div class="flex items-center gap-1.5">
-                <button type="button" onclick="stepValue('total-rolls', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold hover:bg-red-500/10">-</button>
-                <input type="number" id="total-rolls" value="1" min="0" oninput="calculateAll()" class="w-full px-2 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
-                <button type="button" onclick="stepValue('total-rolls', 1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold hover:bg-red-500/10">+</button>
-              </div>
-              <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">พาเลท (Pallet)</div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="stepValue('items-per-bundle', -1)" class="w-8 h-10 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">-</button>
+              <input type="number" id="items-per-bundle" value="10" min="1" oninput="calculateAll()" class="w-24 px-2.5 py-1.5 rounded-lg bg-[var(--card)] border-2 border-[#ED1C24] text-xl font-black text-center text-[#ED1C24] focus:outline-none">
+              <button type="button" onclick="stepValue('items-per-bundle', 1)" class="w-8 h-10 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">+</button>
+              <span class="text-xs font-semibold text-[var(--muted-foreground)]">ฉบับ/มัด</span>
             </div>
           </div>
 
-          <!-- Remainder / Loose items -->
+          <!-- 3.2 พาเลทหลัก (ที่มีจำนวนเท่ากัน) -->
+          <div class="p-4 rounded-xl bg-red-500/5 border-2 border-[#ED1C24]/40 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="font-bold text-sm text-[#ED1C24] flex items-center gap-1.5">
+                <span>📦 กลุ่มพาเลทหลัก (ที่จัดเรียงเท่ากัน)</span>
+              </div>
+              <span class="text-xs font-semibold bg-[#ED1C24] text-white px-2.5 py-0.5 rounded-full">
+                1 พาเลท = <span id="bundles-per-pallet-preview">63</span> มัด (<span id="items-per-pallet-preview">630</span> ฉบับ)
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <!-- ชั้นวางต่อพาเลท -->
+              <div class="p-2.5 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+                <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 พาเลท มีกี่ชั้นวาง?</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepValue('layers-per-pallet', -1)" class="w-7 h-8 rounded bg-[var(--background)] border border-[var(--border)] font-bold">-</button>
+                  <input type="number" id="layers-per-pallet" value="9" min="1" oninput="calculateAll()" class="w-full py-1 rounded bg-[var(--background)] border border-[var(--border)] text-base font-bold text-center focus:outline-none focus:border-[#ED1C24]">
+                  <button type="button" onclick="stepValue('layers-per-pallet', 1)" class="w-7 h-8 rounded bg-[var(--background)] border border-[var(--border)] font-bold">+</button>
+                </div>
+                <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">ชั้นวาง (ถ้าไม่แบ่งชั้น ใส่ 1)</div>
+              </div>
+
+              <!-- มัดต่อชั้นวาง -->
+              <div class="p-2.5 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+                <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 ชั้นวาง มีกี่มัด?</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepValue('bundles-per-layer', -1)" class="w-7 h-8 rounded bg-[var(--background)] border border-[var(--border)] font-bold">-</button>
+                  <input type="number" id="bundles-per-layer" value="7" min="0" oninput="calculateAll()" class="w-full py-1 rounded bg-[var(--background)] border border-[var(--border)] text-base font-bold text-center focus:outline-none focus:border-[#ED1C24]">
+                  <button type="button" onclick="stepValue('bundles-per-layer', 1)" class="w-7 h-8 rounded bg-[var(--background)] border border-[var(--border)] font-bold">+</button>
+                </div>
+                <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">
+                  (= ชั้นละ <span id="items-per-layer-preview" class="font-semibold text-[var(--foreground)]">70</span> ฉบับ)
+                </div>
+              </div>
+
+              <!-- จำนวนพาเลทที่เท่ากัน -->
+              <div class="p-2.5 rounded-lg bg-[var(--card)] border-2 border-[#ED1C24]">
+                <label class="block text-xs font-bold text-[#ED1C24] mb-1">มีกี่พาเลท (ที่เท่ากัน)?</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepValue('total-rolls', -1)" class="w-7 h-8 rounded bg-red-500/10 text-[#ED1C24] font-bold">-</button>
+                  <input type="number" id="total-rolls" value="3" min="0" oninput="calculateAll()" class="w-full py-1 rounded bg-[var(--background)] border border-[var(--border)] text-lg font-black text-center text-[#ED1C24] focus:outline-none">
+                  <button type="button" onclick="stepValue('total-rolls', 1)" class="w-7 h-8 rounded bg-red-500/10 text-[#ED1C24] font-bold">+</button>
+                </div>
+                <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">พาเลทเต็ม</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.3 พาเลทแยก / พาเลทที่ไม่เท่ากัน (Custom Pallets) -->
+          <div class="p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="font-bold text-sm flex items-center gap-1.5">
+                  <span>➕ พาเลทที่เหลือ / พาเลทที่จำนวนไม่เท่ากัน</span>
+                </h3>
+                <p class="text-xs text-[var(--muted-foreground)]">เช่น พาเลทที่ 4 มี 7 ชั้น กับอีก 3 มัด (หรือมัดละกี่ฉบับต่างหาก)</p>
+              </div>
+              <button type="button" onclick="addCustomPallet()" class="px-3 py-1.5 rounded-lg bg-[#ED1C24] hover:bg-red-700 text-white text-xs font-bold shadow-sm transition flex items-center gap-1">
+                <span>+ เพิ่มพาเลทแยก</span>
+              </button>
+            </div>
+
+            <div id="custom-pallets-container" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- 3.4 เศษมัด / เศษฉบับปลีก (นอกพาเลท หรือเศษรวม) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)]">
             <div>
               <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">
-                เศษมัด (มัดที่เหลือไม่เต็มพาเลท)
+                เศษมัดเพิ่มเติม (มัดละ <span id="extra-bundle-size-lbl">10</span> ฉบับ)
               </label>
               <div class="flex items-center gap-2">
                 <button type="button" onclick="stepValue('extra-bundles', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">-</button>
@@ -245,7 +299,7 @@
 
             <div>
               <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">
-                เศษฉบับ (ฉบับปลีกที่ไม่เต็มมัด)
+                เศษฉบับปลีก (ฉบับที่ไม่เต็มมัด)
               </label>
               <div class="flex items-center gap-2">
                 <button type="button" onclick="stepValue('loose-items', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">-</button>
@@ -260,15 +314,15 @@
           </div>
 
           <!-- Note Input -->
-          <div class="mt-4">
+          <div>
             <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">หมายเหตุ / รายละเอียดเพิ่มเติม</label>
-            <textarea id="job-note" rows="2" placeholder="เช่น พาเลทที่ 4 มีมัดคละน้ำหนัก, รอใบนำส่งตัวจริง, เลขที่ใบรับฝาก..." class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]"></textarea>
+            <textarea id="job-note" rows="2" placeholder="เช่น พาเลทที่ 4 มี 7 ชั้น กับอีก 3 มัด, รอใบนำส่งตัวจริง..." class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]"></textarea>
           </div>
         </div>
 
       </div>
 
-      <!-- Right Column: Live Summary & Multi-Item Cart (5 cols) -->
+      <!-- Right Column: Live Summary (5 cols) -->
       <div class="lg:col-span-5 space-y-5">
         
         <!-- Live Calculation Card -->
@@ -285,22 +339,37 @@
           </div>
 
           <!-- Breakdown Table -->
-          <div class="space-y-2.5 text-sm mb-4">
-            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
-              <span class="text-[var(--muted-foreground)]">จากพาเลทเต็ม (<span id="sum-rolls-txt">1 พาเลท × 50 มัด × 100</span>)</span>
-              <span class="font-bold"><span id="sum-rolls-items">5,000</span> ฉบับ</span>
+          <div class="space-y-2 text-sm mb-4">
+            <!-- Standard Pallets Row -->
+            <div class="p-2.5 rounded-lg bg-[var(--background)] flex justify-between items-center gap-2">
+              <div>
+                <div class="font-semibold text-xs">กลุ่มพาเลทหลัก (<span id="sum-std-pallets-count">3</span> พาเลท)</div>
+                <div id="sum-rolls-txt" class="text-xs text-[var(--muted-foreground)]">3 พาเลท × (9 ชั้น × 7 มัด) × 10</div>
+              </div>
+              <span class="font-bold whitespace-nowrap"><span id="sum-rolls-items">1,890</span> ฉบับ</span>
             </div>
-            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
-              <span class="text-[var(--muted-foreground)]">จากเศษมัด (<span id="sum-extrabundles-txt">0 มัด × 100</span>)</span>
-              <span class="font-bold"><span id="sum-extrabundles-items">0</span> ฉบับ</span>
+
+            <!-- Custom Pallets Dynamic Breakdown -->
+            <div id="sum-custom-pallets-list" class="space-y-1.5"></div>
+
+            <!-- Extra Bundles Row -->
+            <div class="py-1.5 px-2.5 rounded-lg bg-[var(--background)] flex justify-between items-center">
+              <span class="text-xs text-[var(--muted-foreground)]">จากเศษมัดเพิ่มเติม (<span id="sum-extrabundles-txt">0 มัด × 10</span>)</span>
+              <span class="font-bold text-xs"><span id="sum-extrabundles-items">0</span> ฉบับ</span>
             </div>
-            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
-              <span class="text-[var(--muted-foreground)]">จากเศษฉบับปลีก</span>
-              <span class="font-bold"><span id="sum-loose-items">0</span> ฉบับ</span>
+
+            <!-- Loose Items Row -->
+            <div class="py-1.5 px-2.5 rounded-lg bg-[var(--background)] flex justify-between items-center">
+              <span class="text-xs text-[var(--muted-foreground)]">จากเศษฉบับปลีก</span>
+              <span class="font-bold text-xs"><span id="sum-loose-items">0</span> ฉบับ</span>
             </div>
-            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)] border border-dashed border-[var(--border)]">
-              <span class="text-xs text-[var(--muted-foreground)]">รวมจำนวนมัดทั้งหมด</span>
-              <span class="font-semibold text-xs"><span id="sum-total-bundles">50</span> มัด (กับเศษ <span id="sum-rem-loose">0</span> ฉบับ)</span>
+
+            <!-- Total Pallets & Bundles Summary -->
+            <div class="py-2 px-3 rounded-lg bg-red-500/5 border border-dashed border-[#ED1C24]/40 flex justify-between items-center">
+              <span class="text-xs font-semibold">รวมพาเลทและมัดทั้งหมด</span>
+              <span class="font-bold text-xs text-[#ED1C24]">
+                <span id="sum-total-pallets-all">3</span> พาเลท | <span id="sum-total-bundles">189</span> มัด (เศษ <span id="sum-rem-loose">0</span> ฉบับ)
+              </span>
             </div>
           </div>
 
@@ -309,13 +378,13 @@
             <div class="flex justify-between items-baseline mb-2">
               <span class="text-xs font-medium text-red-100">รวมจำนวนทั้งสิ้น</span>
               <div class="text-2xl font-black tracking-tight">
-                <span id="grand-total-items">5,000</span> <span class="text-sm font-normal">ฉบับ</span>
+                <span id="grand-total-items">1,890</span> <span class="text-sm font-normal">ฉบับ</span>
               </div>
             </div>
             <div class="flex justify-between items-baseline pt-2 border-t border-red-400/50">
               <span class="text-xs font-medium text-red-100">รวมค่าบริการทั้งสิ้น</span>
               <div class="text-3xl font-black tracking-tight">
-                <span id="grand-total-cost">25,000.00</span> <span class="text-sm font-normal">บาท</span>
+                <span id="grand-total-cost">9,450.00</span> <span class="text-sm font-normal">บาท</span>
               </div>
             </div>
           </div>
@@ -480,8 +549,8 @@
   </main>
 
   <!-- PRINT / SLIP MODAL -->
-  <div id="print-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white text-black rounded-xl max-w-lg w-full p-6 shadow-2xl">
+  <div id="print-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white text-black rounded-xl max-w-lg w-full p-6 shadow-2xl my-8">
       <div class="border-b-2 border-red-600 pb-3 mb-4 flex justify-between items-start">
         <div>
           <div class="text-xs font-bold text-red-600 uppercase">บริษัท ไปรษณีย์ไทย จำกัด</div>
@@ -556,8 +625,10 @@
     };
 
     const STORAGE_KEY = 'thpost_central_rollpallet_records_v1';
-    let currentServiceType = 'letter_env';
+    let currentServiceType = 'printed';
     let records = [];
+    // Array of custom uneven pallets: { id, name, layers, bundlesPerLayer, extraBundles, itemsPerBundle, looseItems }
+    let customPallets = [];
 
     function toggleTheme() {
       document.documentElement.classList.toggle('dark');
@@ -566,7 +637,23 @@
     function initApp() {
       setNowDateTime();
       loadRecords();
-      selectServiceType('letter_env');
+      selectServiceType('printed');
+      // Default to 17 Baht tier (500-1000g) as shown in user's screenshot, or first tier
+      document.getElementById('weight-tier').value = 'pr_1000';
+      onWeightTierChange();
+      // Add 1 example custom pallet (Pallet #4: 7 layers, 7 bundles/layer, +3 bundles) so user sees how easy it is
+      customPallets = [
+        {
+          id: 'cp_' + Date.now(),
+          layers: 7,
+          bundlesPerLayer: 7,
+          extraBundles: 3,
+          itemsPerBundle: 10,
+          looseItems: 0
+        }
+      ];
+      renderCustomPallets();
+      calculateAll();
       renderHistory();
     }
 
@@ -586,9 +673,9 @@
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
         const btn = document.getElementById(`tab-btn-${t}`);
         if (t === tab) {
-          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-[#ED1C24] shadow-sm transition flex items-center gap-1.5';
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-[#ED1C24] shadow-sm transition flex items-center gap-1.5';
         } else {
-          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition flex items-center gap-1.5';
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition flex items-center gap-1.5';
         }
       });
       if (tab === 'history') renderHistory();
@@ -643,29 +730,183 @@
 
     function setQuickBundle(val) {
       document.getElementById('items-per-bundle').value = val;
+      // Also update custom pallets that still match standard or let user keep custom
       calculateAll();
     }
 
     function stepValue(inputId, delta) {
       const el = document.getElementById(inputId);
       const current = parseInt(el.value, 10) || 0;
-      el.value = Math.max(0, current + delta);
+      const minVal = parseInt(el.getAttribute('min'), 10) || 0;
+      el.value = Math.max(minVal, current + delta);
       calculateAll();
+    }
+
+    // Custom Pallets Management
+    function addCustomPallet() {
+      const defaultItemsPerBundle = Math.max(1, parseInt(document.getElementById('items-per-bundle').value, 10) || 10);
+      const defaultBundlesPerLayer = Math.max(0, parseInt(document.getElementById('bundles-per-layer').value, 10) || 7);
+      customPallets.push({
+        id: 'cp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        layers: 1,
+        bundlesPerLayer: defaultBundlesPerLayer,
+        extraBundles: 0,
+        itemsPerBundle: defaultItemsPerBundle,
+        looseItems: 0
+      });
+      renderCustomPallets();
+      calculateAll();
+    }
+
+    function removeCustomPallet(id) {
+      customPallets = customPallets.filter(p => p.id !== id);
+      renderCustomPallets();
+      calculateAll();
+    }
+
+    function updateCustomPalletField(id, field, val) {
+      const p = customPallets.find(x => x.id === id);
+      if (!p) return;
+      p[field] = Math.max(0, parseInt(val, 10) || 0);
+      calculateAll();
+      // Update inline preview for this custom pallet without losing focus
+      const totalBundles = (p.layers * p.bundlesPerLayer) + p.extraBundles;
+      const totalItems = (totalBundles * p.itemsPerBundle) + p.looseItems;
+      const badge = document.getElementById(`cp-badge-${id}`);
+      if (badge) {
+        badge.textContent = `รวม ${totalBundles.toLocaleString()} มัด${p.looseItems > 0 ? ` + เศษ ${p.looseItems}` : ''} = ${totalItems.toLocaleString()} ฉบับ`;
+      }
+    }
+
+    function stepCustomPallet(id, field, delta) {
+      const p = customPallets.find(x => x.id === id);
+      if (!p) return;
+      p[field] = Math.max(0, (parseInt(p[field], 10) || 0) + delta);
+      renderCustomPallets();
+      calculateAll();
+    }
+
+    function renderCustomPallets() {
+      const container = document.getElementById('custom-pallets-container');
+      const stdPalletCount = Math.max(0, parseInt(document.getElementById('total-rolls').value, 10) || 0);
+
+      if (customPallets.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-4 px-3 rounded-lg border border-dashed border-[var(--border)] text-xs text-[var(--muted-foreground)]">
+            ไม่มีพาเลทแยก (หากมีพาเลทที่จำนวนชั้นหรือมัดไม่เท่ากับกลุ่มหลัก กดปุ่ม <strong>"+ เพิ่มพาเลทแยก"</strong> ด้านบนได้เลยครับ)
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = customPallets.map((p, idx) => {
+        const palletNumber = stdPalletCount + idx + 1;
+        const totalBundles = (p.layers * p.bundlesPerLayer) + p.extraBundles;
+        const totalItems = (totalBundles * p.itemsPerBundle) + p.looseItems;
+        return `
+          <div class="p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] shadow-sm space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold text-xs">
+                  พาเลทที่ ${palletNumber} (พาเลทแยก #${idx + 1})
+                </span>
+                <span id="cp-badge-${p.id}" class="text-xs font-bold text-[#ED1C24]">
+                  รวม ${totalBundles.toLocaleString()} มัด${p.looseItems > 0 ? ` + เศษ ${p.looseItems}` : ''} = ${totalItems.toLocaleString()} ฉบับ
+                </span>
+              </div>
+              <button type="button" onclick="removeCustomPallet('${p.id}')" class="text-xs text-red-500 hover:underline font-semibold">
+                ✕ ลบพาเลทนี้
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+              <div>
+                <label class="block text-[var(--muted-foreground)] mb-1">กี่ชั้นวาง?</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'layers', -1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">-</button>
+                  <input type="number" value="${p.layers}" min="0" oninput="updateCustomPalletField('${p.id}', 'layers', this.value)" class="w-full py-1 rounded bg-[var(--background)] border border-[var(--border)] font-bold text-center">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'layers', 1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">+</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[var(--muted-foreground)] mb-1">ชั้นละกี่มัด?</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'bundlesPerLayer', -1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">-</button>
+                  <input type="number" value="${p.bundlesPerLayer}" min="0" oninput="updateCustomPalletField('${p.id}', 'bundlesPerLayer', this.value)" class="w-full py-1 rounded bg-[var(--background)] border border-[var(--border)] font-bold text-center">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'bundlesPerLayer', 1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">+</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[var(--muted-foreground)] mb-1">+ เศษกี่มัด?</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'extraBundles', -1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">-</button>
+                  <input type="number" value="${p.extraBundles}" min="0" oninput="updateCustomPalletField('${p.id}', 'extraBundles', this.value)" class="w-full py-1 rounded bg-[var(--background)] border border-amber-500/50 font-bold text-center">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'extraBundles', 1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">+</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[var(--muted-foreground)] mb-1">มัดละกี่ฉบับ?</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'itemsPerBundle', -1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">-</button>
+                  <input type="number" value="${p.itemsPerBundle}" min="1" oninput="updateCustomPalletField('${p.id}', 'itemsPerBundle', this.value)" class="w-full py-1 rounded bg-[var(--background)] border border-[var(--border)] font-bold text-center">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'itemsPerBundle', 1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">+</button>
+                </div>
+              </div>
+
+              <div class="col-span-2 sm:col-span-1">
+                <label class="block text-[var(--muted-foreground)] mb-1">+ เศษฉบับปลีก</label>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'looseItems', -1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">-</button>
+                  <input type="number" value="${p.looseItems}" min="0" oninput="updateCustomPalletField('${p.id}', 'looseItems', this.value)" class="w-full py-1 rounded bg-[var(--background)] border border-[var(--border)] font-bold text-center">
+                  <button type="button" onclick="stepCustomPallet('${p.id}', 'looseItems', 1)" class="w-6 h-7 rounded bg-[var(--background)] border border-[var(--border)] font-bold">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function getCurrentCalculation() {
       const itemsPerBundle = Math.max(0, parseInt(document.getElementById('items-per-bundle').value, 10) || 0);
-      const bundlesPerRoll = Math.max(0, parseInt(document.getElementById('bundles-per-roll').value, 10) || 0);
+      const layersPerPallet = Math.max(1, parseInt(document.getElementById('layers-per-pallet').value, 10) || 1);
+      const bundlesPerLayer = Math.max(0, parseInt(document.getElementById('bundles-per-layer').value, 10) || 0);
+      const bundlesPerRoll = layersPerPallet * bundlesPerLayer; // total bundles per standard pallet
       const totalRolls = Math.max(0, parseInt(document.getElementById('total-rolls').value, 10) || 0);
       const extraBundles = Math.max(0, parseInt(document.getElementById('extra-bundles').value, 10) || 0);
       const looseItems = Math.max(0, parseInt(document.getElementById('loose-items').value, 10) || 0);
       const unitPrice = Math.max(0, parseFloat(document.getElementById('unit-price').value) || 0);
 
-      const itemsPerRoll = itemsPerBundle * bundlesPerRoll;
+      const itemsPerLayer = bundlesPerLayer * itemsPerBundle;
+      const itemsPerRoll = bundlesPerRoll * itemsPerBundle;
       const itemsFromRolls = totalRolls * itemsPerRoll;
       const itemsFromExtraBundles = extraBundles * itemsPerBundle;
-      const totalBundles = (totalRolls * bundlesPerRoll) + extraBundles;
-      const grandTotalItems = itemsFromRolls + itemsFromExtraBundles + looseItems;
+
+      // Calculate Custom Pallets
+      let customPalletsBundles = 0;
+      let customPalletsLoose = 0;
+      let customPalletsItems = 0;
+      const customPalletsDetails = customPallets.map((p, idx) => {
+        const bCount = (p.layers * p.bundlesPerLayer) + p.extraBundles;
+        const iCount = (bCount * p.itemsPerBundle) + p.looseItems;
+        customPalletsBundles += bCount;
+        customPalletsLoose += p.looseItems;
+        customPalletsItems += iCount;
+        return {
+          ...p,
+          palletNo: totalRolls + idx + 1,
+          totalBundles: bCount,
+          totalItems: iCount
+        };
+      });
+
+      const totalPalletsAll = totalRolls + customPallets.length;
+      const totalBundles = (totalRolls * bundlesPerRoll) + customPalletsBundles + extraBundles;
+      const totalLooseAll = looseItems + customPalletsLoose;
+      const grandTotalItems = itemsFromRolls + customPalletsItems + itemsFromExtraBundles + looseItems;
       const grandTotalCost = grandTotalItems * unitPrice;
 
       const tierSelect = document.getElementById('weight-tier');
@@ -678,11 +919,19 @@
         tierLabel,
         unitPrice,
         itemsPerBundle,
+        layersPerPallet,
+        bundlesPerLayer,
+        itemsPerLayer,
         bundlesPerRoll,
         itemsPerRoll,
         totalRolls,
+        totalPalletsAll,
+        customPalletsDetails,
+        customPalletsBundles,
+        customPalletsItems,
         extraBundles,
         looseItems,
+        totalLooseAll,
         itemsFromRolls,
         itemsFromExtraBundles,
         totalBundles,
@@ -694,21 +943,44 @@
     function calculateAll() {
       const c = getCurrentCalculation();
 
-      document.getElementById('items-per-roll-preview').textContent = c.itemsPerRoll.toLocaleString();
+      document.getElementById('items-per-layer-preview').textContent = c.itemsPerLayer.toLocaleString();
+      document.getElementById('bundles-per-pallet-preview').textContent = c.bundlesPerRoll.toLocaleString();
+      document.getElementById('items-per-pallet-preview').textContent = c.itemsPerRoll.toLocaleString();
+      document.getElementById('extra-bundle-size-lbl').textContent = c.itemsPerBundle.toLocaleString();
       document.getElementById('extra-bundles-items-preview').textContent = c.itemsFromExtraBundles.toLocaleString();
 
       document.getElementById('summary-service-title').textContent = c.serviceName;
       document.getElementById('summary-unit-price').textContent = c.unitPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-      document.getElementById('sum-rolls-txt').textContent = `${c.totalRolls} พาเลท × ${c.bundlesPerRoll} มัด × ${c.itemsPerBundle}`;
+      document.getElementById('sum-std-pallets-count').textContent = c.totalRolls.toLocaleString();
+      document.getElementById('sum-rolls-txt').textContent = `${c.totalRolls} พาเลท × (${c.layersPerPallet} ชั้น × ${c.bundlesPerLayer} มัด = ${c.bundlesPerRoll} มัด) × ${c.itemsPerBundle}`;
       document.getElementById('sum-rolls-items').textContent = c.itemsFromRolls.toLocaleString();
+
+      // Render custom pallets summary in right card
+      const customListEl = document.getElementById('sum-custom-pallets-list');
+      if (c.customPalletsDetails.length === 0) {
+        customListEl.innerHTML = '';
+      } else {
+        customListEl.innerHTML = c.customPalletsDetails.map(p => `
+          <div class="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex justify-between items-center gap-2">
+            <div>
+              <div class="font-semibold text-xs text-amber-700 dark:text-amber-300">พาเลทที่ ${p.palletNo} (พาเลทแยก)</div>
+              <div class="text-xs text-[var(--muted-foreground)]">
+                (${p.layers} ชั้น × ${p.bundlesPerLayer} มัด${p.extraBundles > 0 ? ` + ${p.extraBundles} มัด` : ''} = ${p.totalBundles} มัด) × ${p.itemsPerBundle}${p.looseItems > 0 ? ` + เศษ ${p.looseItems}` : ''}
+              </div>
+            </div>
+            <span class="font-bold whitespace-nowrap text-xs">${p.totalItems.toLocaleString()} ฉบับ</span>
+          </div>
+        `).join('');
+      }
 
       document.getElementById('sum-extrabundles-txt').textContent = `${c.extraBundles} มัด × ${c.itemsPerBundle}`;
       document.getElementById('sum-extrabundles-items').textContent = c.itemsFromExtraBundles.toLocaleString();
 
       document.getElementById('sum-loose-items').textContent = c.looseItems.toLocaleString();
+      document.getElementById('sum-total-pallets-all').textContent = c.totalPalletsAll.toLocaleString();
       document.getElementById('sum-total-bundles').textContent = c.totalBundles.toLocaleString();
-      document.getElementById('sum-rem-loose').textContent = c.looseItems.toLocaleString();
+      document.getElementById('sum-rem-loose').textContent = c.totalLooseAll.toLocaleString();
 
       document.getElementById('grand-total-items').textContent = c.grandTotalItems.toLocaleString();
       document.getElementById('grand-total-cost').textContent = c.grandTotalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -719,6 +991,8 @@
       document.getElementById('extra-bundles').value = 0;
       document.getElementById('loose-items').value = 0;
       document.getElementById('job-note').value = '';
+      customPallets = [];
+      renderCustomPallets();
       calculateAll();
     }
 
@@ -778,7 +1052,7 @@
 
       let totalRolls = 0, totalItems = 0, totalCost = 0;
       filtered.forEach(r => {
-        totalRolls += (r.totalRolls || 0);
+        totalRolls += (r.totalPalletsAll !== undefined ? r.totalPalletsAll : (r.totalRolls || 0));
         totalItems += (r.grandTotalItems || 0);
         totalCost += (r.grandTotalCost || 0);
       });
@@ -798,7 +1072,12 @@
         return;
       }
 
-      listEl.innerHTML = filtered.map(r => `
+      listEl.innerHTML = filtered.map(r => {
+        const palletCountAll = r.totalPalletsAll !== undefined ? r.totalPalletsAll : r.totalRolls;
+        const customInfo = (r.customPalletsDetails && r.customPalletsDetails.length > 0)
+          ? ` + พาเลทแยก ${r.customPalletsDetails.length} พาเลท (${r.customPalletsItems.toLocaleString()} ฉบับ)`
+          : '';
+        return `
         <div class="p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] flex flex-col sm:flex-row justify-between gap-4 hover:border-red-500/40 transition">
           <div class="space-y-1.5">
             <div class="flex flex-wrap items-center gap-2">
@@ -813,9 +1092,9 @@
               <span>⚖️ พิกัด: <strong class="text-[var(--foreground)]">${escapeHtml(r.tierLabel)}</strong></span>
             </div>
             <div class="text-xs bg-[var(--card)] px-3 py-1.5 rounded-lg border border-[var(--border)] inline-block">
-              📦 <strong>${r.totalRolls}</strong> พาเลท (${r.bundlesPerRoll} มัด/พาเลท × ${r.itemsPerBundle} ฉบับ)
+              📦 รวม <strong>${palletCountAll}</strong> พาเลท: พาเลทหลัก <strong>${r.totalRolls}</strong> พาเลท (${r.bundlesPerRoll} มัด/พาเลท × ${r.itemsPerBundle} ฉบับ)${customInfo}
               + เศษมัด <strong>${r.extraBundles}</strong> มัด
-              + เศษปลีก <strong>${r.looseItems}</strong> ฉบับ
+              + เศษปลีก <strong>${r.totalLooseAll !== undefined ? r.totalLooseAll : r.looseItems}</strong> ฉบับ
             </div>
             ${r.note && r.note !== '-' ? `<div class="text-xs text-[var(--muted-foreground)]">📝 หมายเหตุ: ${escapeHtml(r.note)}</div>` : ''}
           </div>
@@ -831,7 +1110,7 @@
             </div>
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     function deleteRecord(id) {
@@ -875,6 +1154,23 @@
       document.getElementById('slip-sign-coord').textContent = `(${r.coordinatorName})`;
       document.getElementById('slip-sign-recv').textContent = `(${r.receiverName})`;
 
+      const customRowsHtml = (r.customPalletsDetails || []).map(p => `
+        <tr>
+          <td class="border border-gray-300 p-2">พาเลทที่ ${p.palletNo} (พาเลทแยก)</td>
+          <td class="border border-gray-300 p-2 text-right">
+            (${p.layers} ชั้น × ${p.bundlesPerLayer} มัด${p.extraBundles > 0 ? ` + ${p.extraBundles} มัด` : ''} = ${p.totalBundles} มัด) × ${p.itemsPerBundle} ฉบับ${p.looseItems > 0 ? ` + เศษ ${p.looseItems}` : ''}
+          </td>
+          <td class="border border-gray-300 p-2 text-right font-bold">${p.totalItems.toLocaleString()}</td>
+        </tr>
+      `).join('');
+
+      const stdLayerDesc = r.layersPerPallet
+        ? `${r.totalRolls} พาเลท × (${r.layersPerPallet} ชั้น × ${r.bundlesPerLayer} มัด = ${r.bundlesPerRoll} มัด) × ${r.itemsPerBundle} ฉบับ`
+        : `${r.totalRolls} พาเลท × ${r.bundlesPerRoll} มัด × ${r.itemsPerBundle} ฉบับ`;
+
+      const totalPalletsAll = r.totalPalletsAll !== undefined ? r.totalPalletsAll : r.totalRolls;
+      const totalLooseAll = r.totalLooseAll !== undefined ? r.totalLooseAll : r.looseItems;
+
       document.getElementById('slip-body').innerHTML = `
         <div class="grid grid-cols-2 gap-2 bg-gray-100 p-3 rounded-lg text-xs">
           <div><span class="text-gray-500">ลูกค้า/หน่วยงาน:</span> <strong class="block text-sm">${escapeHtml(r.customerName)}</strong></div>
@@ -894,12 +1190,13 @@
           </thead>
           <tbody>
             <tr>
-              <td class="border border-gray-300 p-2">จำนวนพาเลทเต็ม (${r.totalRolls} พาเลท)</td>
-              <td class="border border-gray-300 p-2 text-right">${r.totalRolls} พาเลท × ${r.bundlesPerRoll} มัด × ${r.itemsPerBundle} ฉบับ</td>
+              <td class="border border-gray-300 p-2">กลุ่มพาเลทหลัก (${r.totalRolls} พาเลท)</td>
+              <td class="border border-gray-300 p-2 text-right">${stdLayerDesc}</td>
               <td class="border border-gray-300 p-2 text-right font-bold">${r.itemsFromRolls.toLocaleString()}</td>
             </tr>
+            ${customRowsHtml}
             <tr>
-              <td class="border border-gray-300 p-2">เศษมัด (${r.extraBundles} มัด)</td>
+              <td class="border border-gray-300 p-2">เศษมัดเพิ่มเติม (${r.extraBundles} มัด)</td>
               <td class="border border-gray-300 p-2 text-right">${r.extraBundles} มัด × ${r.itemsPerBundle} ฉบับ</td>
               <td class="border border-gray-300 p-2 text-right font-bold">${r.itemsFromExtraBundles.toLocaleString()}</td>
             </tr>
@@ -909,7 +1206,7 @@
               <td class="border border-gray-300 p-2 text-right font-bold">${r.looseItems.toLocaleString()}</td>
             </tr>
             <tr class="bg-gray-100 font-bold text-sm">
-              <td class="border border-gray-300 p-2" colspan="2">รวมจำนวนไปรษณีย์ภัณฑ์ทั้งสิ้น (รวม ${r.totalBundles.toLocaleString()} มัด กับเศษ ${r.looseItems} ฉบับ)</td>
+              <td class="border border-gray-300 p-2" colspan="2">รวมทั้งสิ้น (${totalPalletsAll} พาเลท | ${r.totalBundles.toLocaleString()} มัด กับเศษ ${totalLooseAll} ฉบับ)</td>
               <td class="border border-gray-300 p-2 text-right text-red-600">${r.grandTotalItems.toLocaleString()} ฉบับ</td>
             </tr>
             <tr class="bg-red-50 font-black text-base">
@@ -939,7 +1236,7 @@
       const headers = [
         'รหัสรายการ', 'วันที่', 'เวลา', 'ชื่อลูกค้า/บริษัท', 'ผู้ประสานงาน', 'ผู้รับงาน(ปณ.กลาง)',
         'ประเภทบริการ', 'พิกัดน้ำหนัก', 'ราคาต่อชิ้น(บาท)',
-        'ฉบับต่อมัด', 'มัดต่อพาเลท', 'จำนวนพาเลทเต็ม', 'เศษมัด', 'เศษฉบับปลีก',
+        'ฉบับต่อมัด', 'มัดต่อพาเลทหลัก', 'จำนวนพาเลทหลัก', 'จำนวนพาเลทแยก', 'รวมพาเลททั้งหมด', 'รวมมัดทั้งหมด', 'รวมเศษฉบับปลีก',
         'รวมจำนวนฉบับทั้งสิ้น', 'รวมค่าบริการ(บาท)', 'หมายเหตุ'
       ];
 
@@ -949,7 +1246,11 @@
         `"${(r.receiverName || '').replace(/"/g, '""')}"`,
         `"${(r.serviceName || '').replace(/"/g, '""')}"`,
         `"${(r.tierLabel || '').replace(/"/g, '""')}"`,
-        r.unitPrice, r.itemsPerBundle, r.bundlesPerRoll, r.totalRolls, r.extraBundles, r.looseItems,
+        r.unitPrice, r.itemsPerBundle, r.bundlesPerRoll, r.totalRolls,
+        (r.customPalletsDetails ? r.customPalletsDetails.length : 0),
+        (r.totalPalletsAll !== undefined ? r.totalPalletsAll : r.totalRolls),
+        r.totalBundles,
+        (r.totalLooseAll !== undefined ? r.totalLooseAll : r.looseItems),
         r.grandTotalItems, r.grandTotalCost.toFixed(2),
         `"${(r.note || '').replace(/"/g, '""')}"`
       ]);
