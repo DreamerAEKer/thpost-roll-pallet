@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบรับงาน Roll Pallet - แผนกลูกค้าธุรกิจ ปณ.กลาง</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #f8fafc;
+      --card: #ffffff;
+      --foreground: #0f172a;
+      --muted-foreground: #64748b;
+      --border: #e2e8f0;
+    }
+    html.dark {
+      --background: #0f172a;
+      --card: #1e293b;
+      --foreground: #f8fafc;
+      --muted-foreground: #94a3b8;
+      --border: #334155;
+    }
+    body {
+      font-family: 'Sarabun', sans-serif;
+    }
+    @media print {
+      body * { visibility: hidden; }
+      #print-modal, #print-modal * { visibility: visible; }
+      #print-modal { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen pb-12 transition-colors duration-200">
+
+  <!-- Header Banner -->
+  <header class="bg-[#ED1C24] text-white shadow-md sticky top-0 z-20 no-print">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="bg-white text-[#ED1C24] font-black rounded-lg px-2.5 py-1.5 text-lg tracking-tight shadow-sm">
+          THAILAND POST
+        </div>
+        <div>
+          <h1 class="font-bold text-base sm:text-lg leading-tight">ระบบรับงานและคำนวณไปรษณีย์ภัณฑ์ (Roll Pallet)</h1>
+          <p class="text-xs text-red-100">แผนกลูกค้าธุรกิจ ปณ.กลาง • อัตราค่าบริการใหม่ (เริ่ม 1 ม.ค. 68)</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="switchTab('form')" id="tab-btn-form" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-[#ED1C24] shadow-sm transition">
+          + บันทึกรับงาน
+        </button>
+        <button onclick="switchTab('history')" id="tab-btn-history" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition flex items-center gap-1.5">
+          <span>ประวัติงานที่บันทึก</span>
+          <span id="history-badge" class="bg-white text-[#ED1C24] px-1.5 py-0.2 rounded-full text-xs font-bold">0</span>
+        </button>
+        <button onclick="switchTab('rates')" id="tab-btn-rates" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition">
+          ตารางเรทราคา
+        </button>
+        <button onclick="toggleTheme()" id="theme-btn" title="สลับโหมดมืด/สว่าง" class="p-1.5 rounded-lg bg-red-700/60 text-white hover:bg-red-700 transition">
+          🌓
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-5 no-print">
+
+    <!-- TAB 1: FORM & CALCULATOR -->
+    <div id="tab-form" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      
+      <!-- Left Column: Inputs (7 cols) -->
+      <div class="lg:col-span-7 space-y-5">
+
+        <!-- Card 1: ข้อมูลทั่วไปและผู้ประสานงาน -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border)]">
+            <h2 class="font-bold text-base flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#ED1C24] inline-block"></span>
+              1. ข้อมูลการรับงานและผู้ประสานงาน
+            </h2>
+            <button type="button" onclick="setNowDateTime()" class="text-xs text-[#ED1C24] hover:underline font-medium">
+              ตั้งเวลาปัจจุบัน
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">วันที่รับงาน</label>
+              <input type="date" id="job-date" class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">เวลารับงาน</label>
+              <input type="time" id="job-time" class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">ชื่อบริษัท / ลูกค้าธุรกิจ / หน่วยงาน</label>
+              <input type="text" id="customer-name" placeholder="เช่น บมจ. ธนาคาร..., บริษัท ประกันภัย..." class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">ผู้ประสานงาน (ฝั่งลูกค้า/ผู้ส่ง)</label>
+              <input type="text" id="coordinator-name" placeholder="ระบุชื่อ-เบอร์โทรผู้ประสานงาน" class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">ผู้รับงาน (เจ้าหน้าที่ ปณ.กลาง)</label>
+              <input type="text" id="receiver-name" placeholder="ระบุชื่อเจ้าหน้าที่ผู้รับงาน" class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: ประเภทบริการและพิกัดน้ำหนัก -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border)]">
+            <h2 class="font-bold text-base flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#ED1C24] inline-block"></span>
+              2. ประเภทบริการและอัตราค่าบริการ
+            </h2>
+            <span class="text-xs px-2 py-0.5 rounded bg-red-500/10 text-[#ED1C24] font-semibold">เรท 1 ม.ค. 68</span>
+          </div>
+
+          <!-- Service Type Selector -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-4">
+            <button type="button" onclick="selectServiceType('letter_env')" id="srv-letter_env" class="srv-btn p-3 rounded-xl border-2 border-[#ED1C24] bg-red-500/10 text-left transition">
+              <div class="font-bold text-sm">จดหมายธรรมดา (ซอง)</div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-0.5">เริ่มต้น 5 - 62 บาท</div>
+            </button>
+            <button type="button" onclick="selectServiceType('letter_pkg')" id="srv-letter_pkg" class="srv-btn p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-left transition hover:border-red-400">
+              <div class="font-bold text-sm">จดหมายธรรมดา (หีบห่อ)</div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-0.5">34 - 62 บาท (สูงสุด 2 กก.)</div>
+            </button>
+            <button type="button" onclick="selectServiceType('printed')" id="srv-printed" class="srv-btn p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-left transition hover:border-red-400">
+              <div class="font-bold text-sm">ของตีพิมพ์ (สิ่งพิมพ์)</div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-0.5">เริ่มต้น 4 บาท (สูงสุด 5 กก.)</div>
+            </button>
+          </div>
+
+          <!-- Weight Bracket Selection -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+            <div class="sm:col-span-7">
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">เลือกพิกัดน้ำหนัก (กรัม)</label>
+              <select id="weight-tier" onchange="onWeightTierChange()" class="w-full px-3 py-2.5 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm font-medium focus:outline-none focus:border-[#ED1C24]">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+
+            <!-- Extra KG input for Printed Matter > 2000g -->
+            <div id="extra-kg-container" class="sm:col-span-5 hidden">
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">น้ำหนักรวม (กก. ปัดเศษขึ้น)</label>
+              <select id="printed-total-kg" onchange="onWeightTierChange()" class="w-full px-3 py-2.5 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm font-medium focus:outline-none focus:border-[#ED1C24]">
+                <option value="3">เกิน 2 กก. - 3 กก. (49 บาท)</option>
+                <option value="4">เกิน 3 กก. - 4 กก. (65 บาท)</option>
+                <option value="5">เกิน 4 กก. - 5 กก. (81 บาท)</option>
+              </select>
+            </div>
+
+            <div class="sm:col-span-5" id="unit-price-box">
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">อัตราค่าบริการต่อฉบับ (บาท)</label>
+              <div class="flex items-center gap-2">
+                <input type="number" id="unit-price" step="0.01" min="0" oninput="calculateAll()" class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-base font-bold text-[#ED1C24] focus:outline-none focus:border-[#ED1C24]">
+                <span class="text-xs text-[var(--muted-foreground)] whitespace-nowrap">บาท/ชิ้น</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Add-on: ลงทะเบียน (R) -->
+          <div class="mt-3 pt-3 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-2">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-xs sm:text-sm">
+              <input type="checkbox" id="addon-register" onchange="onRegisterToggle()" class="rounded border-[var(--border)] text-[#ED1C24] focus:ring-[#ED1C24] w-4 h-4">
+              <span>บวกบริการลงทะเบียนในประเทศ (+13 บาท/ชิ้น สำหรับซอง หรือเรทลงทะเบียน)</span>
+            </label>
+            <span class="text-xs text-[var(--muted-foreground)]">*แก้ไขราคาต่อชิ้นได้หากมีส่วนลดสัญญา</span>
+          </div>
+        </div>
+
+        <!-- Card 3: ตัวช่วยนับจำนวนบน Roll Pallet -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-[var(--border)]">
+            <h2 class="font-bold text-base flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#ED1C24] inline-block"></span>
+              3. นับจำนวนงานบน Roll Pallet
+            </h2>
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="text-[var(--muted-foreground)]">ตั้งค่ามัดด่วน:</span>
+              <button type="button" onclick="setQuickBundle(50)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">50</button>
+              <button type="button" onclick="setQuickBundle(100)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">100</button>
+              <button type="button" onclick="setQuickBundle(200)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">200</button>
+              <button type="button" onclick="setQuickBundle(500)" class="px-2 py-0.5 rounded border border-[var(--border)] hover:bg-red-500/10 hover:border-[#ED1C24] transition">500</button>
+            </div>
+          </div>
+
+          <!-- Main Roll Formula Inputs -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-4">
+            <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 มัด มีกี่ฉบับ?</label>
+              <div class="flex items-center gap-2">
+                <input type="number" id="items-per-bundle" value="100" min="0" oninput="calculateAll()" class="w-full px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
+                <span class="text-xs text-[var(--muted-foreground)]">ฉบับ</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">1 โรล มีกี่มัด?</label>
+              <div class="flex items-center gap-2">
+                <input type="number" id="bundles-per-roll" value="50" min="0" oninput="calculateAll()" class="w-full px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
+                <span class="text-xs text-[var(--muted-foreground)]">มัด</span>
+              </div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">
+                (= <span id="items-per-roll-preview" class="font-semibold text-[var(--foreground)]">5,000</span> ฉบับ/โรล)
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-red-500/5 border-2 border-[#ED1C24]/40">
+              <label class="block text-xs font-semibold text-[#ED1C24] mb-1">จำนวนกี่โรล (เต็ม)?</label>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="stepValue('total-rolls', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold hover:bg-red-500/10">-</button>
+                <input type="number" id="total-rolls" value="1" min="0" oninput="calculateAll()" class="w-full px-2 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-lg font-bold text-center focus:outline-none focus:border-[#ED1C24]">
+                <button type="button" onclick="stepValue('total-rolls', 1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold hover:bg-red-500/10">+</button>
+              </div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-1 text-center">โรลพาเลท</div>
+            </div>
+          </div>
+
+          <!-- Remainder / Loose items -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+            <div>
+              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">
+                เศษมัด (มัดที่เหลือไม่เต็มโรล)
+              </label>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="stepValue('extra-bundles', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">-</button>
+                <input type="number" id="extra-bundles" value="0" min="0" oninput="calculateAll()" class="w-full px-3 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-base font-bold text-center focus:outline-none focus:border-[#ED1C24]">
+                <button type="button" onclick="stepValue('extra-bundles', 1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">+</button>
+                <span class="text-xs text-[var(--muted-foreground)] whitespace-nowrap">มัด</span>
+              </div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-1">
+                คิดเป็น <span id="extra-bundles-items-preview" class="font-semibold">0</span> ฉบับ
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-[var(--muted-foreground)] mb-1">
+                เศษฉบับ (ฉบับปลีกที่ไม่เต็มมัด)
+              </label>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="stepValue('loose-items', -1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">-</button>
+                <input type="number" id="loose-items" value="0" min="0" oninput="calculateAll()" class="w-full px-3 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-base font-bold text-center focus:outline-none focus:border-[#ED1C24]">
+                <button type="button" onclick="stepValue('loose-items', 1)" class="w-8 h-9 rounded-lg bg-[var(--card)] border border-[var(--border)] font-bold">+</button>
+                <span class="text-xs text-[var(--muted-foreground)] whitespace-nowrap">ฉบับ</span>
+              </div>
+              <div class="text-xs text-[var(--muted-foreground)] mt-1">
+                บวกเพิ่มโดยตรงในยอดรวม
+              </div>
+            </div>
+          </div>
+
+          <!-- Note Input -->
+          <div class="mt-4">
+            <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">หมายเหตุ / รายละเอียดเพิ่มเติม</label>
+            <textarea id="job-note" rows="2" placeholder="เช่น โรลที่ 4 มีมัดคละน้ำหนัก, รอใบนำส่งตัวจริง, เลขที่ใบรับฝาก..." class="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-sm focus:outline-none focus:border-[#ED1C24]"></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Live Summary & Multi-Item Cart (5 cols) -->
+      <div class="lg:col-span-5 space-y-5">
+        
+        <!-- Live Calculation Card -->
+        <div class="bg-[var(--card)] border-2 border-[#ED1C24] rounded-xl p-5 shadow-md sticky top-20">
+          <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 mb-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-[#ED1C24]">สรุปยอดคำนวณรายการปัจจุบัน</span>
+              <h3 id="summary-service-title" class="font-bold text-base mt-0.5">จดหมายธรรมดา (แบบซอง)</h3>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-[var(--muted-foreground)]">ราคา/ชิ้น</span>
+              <div class="text-lg font-black text-[#ED1C24]"><span id="summary-unit-price">5.00</span> ฿</div>
+            </div>
+          </div>
+
+          <!-- Breakdown Table -->
+          <div class="space-y-2.5 text-sm mb-4">
+            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
+              <span class="text-[var(--muted-foreground)]">จากโรลเต็ม (<span id="sum-rolls-txt">1 โรล × 50 มัด × 100</span>)</span>
+              <span class="font-bold"><span id="sum-rolls-items">5,000</span> ฉบับ</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
+              <span class="text-[var(--muted-foreground)]">จากเศษมัด (<span id="sum-extrabundles-txt">0 มัด × 100</span>)</span>
+              <span class="font-bold"><span id="sum-extrabundles-items">0</span> ฉบับ</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)]">
+              <span class="text-[var(--muted-foreground)]">จากเศษฉบับปลีก</span>
+              <span class="font-bold"><span id="sum-loose-items">0</span> ฉบับ</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 px-3 rounded-lg bg-[var(--background)] border border-dashed border-[var(--border)]">
+              <span class="text-xs text-[var(--muted-foreground)]">รวมจำนวนมัดทั้งหมด</span>
+              <span class="font-semibold text-xs"><span id="sum-total-bundles">50</span> มัด (กับเศษ <span id="sum-rem-loose">0</span> ฉบับ)</span>
+            </div>
+          </div>
+
+          <!-- Grand Total Box -->
+          <div class="p-4 rounded-xl bg-[#ED1C24] text-white mb-4">
+            <div class="flex justify-between items-baseline mb-2">
+              <span class="text-xs font-medium text-red-100">รวมจำนวนทั้งสิ้น</span>
+              <div class="text-2xl font-black tracking-tight">
+                <span id="grand-total-items">5,000</span> <span class="text-sm font-normal">ฉบับ</span>
+              </div>
+            </div>
+            <div class="flex justify-between items-baseline pt-2 border-t border-red-400/50">
+              <span class="text-xs font-medium text-red-100">รวมค่าบริการทั้งสิ้น</span>
+              <div class="text-3xl font-black tracking-tight">
+                <span id="grand-total-cost">25,000.00</span> <span class="text-sm font-normal">บาท</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="space-y-2.5">
+            <button type="button" onclick="saveCurrentRecord()" class="w-full py-3 px-4 rounded-xl bg-[#ED1C24] hover:bg-red-700 text-white font-bold text-sm shadow transition flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+              <span>บันทึกรายการรับงานลงเครื่อง</span>
+            </button>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="previewCurrentSlip()" class="py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)] hover:bg-red-500/10 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                <span>พิมพ์ใบสรุปรับงาน</span>
+              </button>
+              <button type="button" onclick="resetFormCounts()" class="py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)] hover:bg-red-500/10 text-xs font-semibold text-[var(--muted-foreground)] transition">
+                ล้างตัวเลขนับใหม่
+              </button>
+            </div>
+          </div>
+
+          <!-- Saved feedback toast -->
+          <div id="save-toast" class="hidden mt-3 p-2.5 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-500 text-xs font-semibold text-center">
+            ✓ บันทึกข้อมูลเรียบร้อยแล้ว! ดูได้ที่แถบ "ประวัติงานที่บันทึก"
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: SAVED HISTORY -->
+    <div id="tab-history" class="hidden space-y-4">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[var(--border)]">
+          <div>
+            <h2 class="font-bold text-lg">ประวัติการรับงาน (บันทึกไว้ในเครื่อง)</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">ข้อมูลถูกเก็บในเบราว์เซอร์ของเครื่องนี้อัตโนมัติ (LocalStorage) ไม่สูญหายเมื่อปิดหน้าเว็บ</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <input type="text" id="search-history" oninput="renderHistory()" placeholder="ค้นหาชื่อลูกค้า / ผู้ประสานงาน / หมายเหตุ..." class="px-3 py-1.5 rounded-lg bg-[var(--background)] border border-[var(--border)] text-xs sm:text-sm focus:outline-none focus:border-[#ED1C24] w-56">
+            <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span>ส่งออก Excel (CSV)</span>
+            </button>
+            <button onclick="clearAllHistory()" class="px-3 py-1.5 rounded-lg border border-red-500/40 text-red-500 hover:bg-red-500/10 text-xs font-semibold transition">
+              ล้างประวัติทั้งหมด
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Dashboard Bar -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+            <div class="text-xs text-[var(--muted-foreground)]">จำนวนรายการที่รับ</div>
+            <div class="text-xl font-black mt-0.5"><span id="hist-stat-count">0</span> รายการ</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+            <div class="text-xs text-[var(--muted-foreground)]">รวมจำนวนโรล</div>
+            <div class="text-xl font-black mt-0.5"><span id="hist-stat-rolls">0</span> โรล</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+            <div class="text-xs text-[var(--muted-foreground)]">รวมจำนวนชิ้นงานทั้งหมด</div>
+            <div class="text-xl font-black text-[#ED1C24] mt-0.5"><span id="hist-stat-items">0</span> ฉบับ</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+            <div class="text-xs text-[var(--muted-foreground)]">รวมค่าบริการทั้งสิ้น</div>
+            <div class="text-xl font-black text-emerald-500 mt-0.5"><span id="hist-stat-cost">0.00</span> ฿</div>
+          </div>
+        </div>
+
+        <!-- History List -->
+        <div id="history-list" class="space-y-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: RATE TABLE REFERENCE -->
+    <div id="tab-rates" class="hidden space-y-4">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-[var(--border)]">
+          <div>
+            <h2 class="font-bold text-lg text-[#ED1C24]">อัตราค่าบริการสำหรับส่งไปรษณีย์ในประเทศ (เริ่ม 1 ม.ค. 2568)</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">อ้างอิงตามตารางอัตราค่าบริการ ไปรษณีย์ไทย สำหรับงานจดหมายธรรมดา (แบบซอง/หีบห่อ) และของตีพิมพ์ (สิ่งพิมพ์)</p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="bg-[#ED1C24] text-white text-left">
+                <th class="p-3 border border-[var(--border)]">พิกัดน้ำหนัก</th>
+                <th class="p-3 border border-[var(--border)] text-center">จดหมาย (แบบซอง)</th>
+                <th class="p-3 border border-[var(--border)] text-center">จดหมาย (แบบหีบห่อ)</th>
+                <th class="p-3 border border-[var(--border)] text-center">จดหมายลงทะเบียน (ซอง/หีบห่อ)</th>
+                <th class="p-3 border border-[var(--border)] text-center">ของตีพิมพ์ (สิ่งพิมพ์)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--border)]">
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">ไม่เกิน 10 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">5 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center" rowspan="5">34 บาท<br><span class="text-xs text-[var(--muted-foreground)]">(ไม่เกิน 500 กรัม)</span></td>
+                <td class="p-2.5 border border-[var(--border)] text-center">18 / 49 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold" rowspan="2">4 บาท<br><span class="text-xs font-normal text-[var(--muted-foreground)]">(ไม่เกิน 50 กรัม)</span></td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 10 กรัม แต่ไม่เกิน 20 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">6 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center">19 / 49 บาท</td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 20 กรัม แต่ไม่เกิน 50 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold" rowspan="2">11 บาท<br><span class="text-xs font-normal text-[var(--muted-foreground)]">(21 - 100 กรัม)</span></td>
+                <td class="p-2.5 border border-[var(--border)] text-center" rowspan="2">24 / 49 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">4 บาท (ไม่เกิน 50ก.)</td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 50 กรัม แต่ไม่เกิน 100 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">5 บาท (51 - 100ก.)</td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 100 กรัม แต่ไม่เกิน 250 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">17 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center">30 / 49 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">8 บาท</td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 250 กรัม แต่ไม่เกิน 500 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">23 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center">34 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center">36 / 49 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">11 บาท</td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 500 กรัม แต่ไม่เกิน 1,000 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">40 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">45 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center">53 / 60 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">17 บาท</td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 1,000 กรัม แต่ไม่เกิน 2,000 กรัม</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">62 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">62 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center">75 / 77 บาท</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">33 บาท</td>
+              </tr>
+              <tr class="hover:bg-[var(--background)]">
+                <td class="p-2.5 border border-[var(--border)] font-medium">เกิน 2,000 กรัม (เฉพาะของตีพิมพ์ สูงสุด 5 กก.)</td>
+                <td class="p-2.5 border border-[var(--border)] text-center text-[var(--muted-foreground)]">สูงสุด 2 กก.</td>
+                <td class="p-2.5 border border-[var(--border)] text-center text-[var(--muted-foreground)]">สูงสุด 2 กก.</td>
+                <td class="p-2.5 border border-[var(--border)] text-center text-[var(--muted-foreground)]">สูงสุด 2 กก.</td>
+                <td class="p-2.5 border border-[var(--border)] text-center font-bold">คิด กก. ละ 16 บาท<br><span class="text-xs font-normal text-[var(--muted-foreground)]">(3กก.=49฿, 4กก.=65฿, 5กก.=81฿)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- PRINT / SLIP MODAL -->
+  <div id="print-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white text-black rounded-xl max-w-lg w-full p-6 shadow-2xl">
+      <div class="border-b-2 border-red-600 pb-3 mb-4 flex justify-between items-start">
+        <div>
+          <div class="text-xs font-bold text-red-600 uppercase">บริษัท ไปรษณีย์ไทย จำกัด</div>
+          <h3 class="text-lg font-black">ใบสรุปการรับงาน (Roll Pallet)</h3>
+          <p class="text-xs text-gray-600">แผนกลูกค้าธุรกิจ ปณ.กลาง</p>
+        </div>
+        <div class="text-right text-xs text-gray-600">
+          <div id="slip-datetime" class="font-bold text-black"></div>
+          <div id="slip-id"></div>
+        </div>
+      </div>
+
+      <div id="slip-body" class="space-y-3 text-sm">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 mt-8 pt-4 border-t border-gray-300 text-center text-xs">
+        <div>
+          <div class="h-10 border-b border-dotted border-gray-400 mb-1"></div>
+          <div class="font-semibold">ผู้ประสานงาน / ผู้ส่งมอบงาน</div>
+          <div id="slip-sign-coord" class="text-gray-600 mt-0.5"></div>
+        </div>
+        <div>
+          <div class="h-10 border-b border-dotted border-gray-400 mb-1"></div>
+          <div class="font-semibold">เจ้าหน้าที่ผู้รับงาน (ปณ.กลาง)</div>
+          <div id="slip-sign-recv" class="text-gray-600 mt-0.5"></div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2 no-print">
+        <button onclick="closeSlipModal()" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-xs font-semibold hover:bg-gray-100">ปิดหน้าต่าง</button>
+        <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-[#ED1C24] text-white text-xs font-bold hover:bg-red-700">สั่งพิมพ์ (Print)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Rate Data (Effective 1 Jan 2568)
+    const SERVICE_RATES = {
+      letter_env: {
+        name: 'จดหมายธรรมดา (แบบซอง)',
+        tiers: [
+          { id: 'le_10', label: 'ไม่เกิน 10 กรัม (5 บาท)', price: 5, regPrice: 18 },
+          { id: 'le_20', label: 'เกิน 10 - 20 กรัม (6 บาท)', price: 6, regPrice: 19 },
+          { id: 'le_100', label: 'เกิน 20 - 100 กรัม (11 บาท)', price: 11, regPrice: 24 },
+          { id: 'le_250', label: 'เกิน 100 - 250 กรัม (17 บาท)', price: 17, regPrice: 30 },
+          { id: 'le_500', label: 'เกิน 250 - 500 กรัม (23 บาท)', price: 23, regPrice: 36 },
+          { id: 'le_1000', label: 'เกิน 500 - 1,000 กรัม (40 บาท)', price: 40, regPrice: 53 },
+          { id: 'le_2000', label: 'เกิน 1,000 - 2,000 กรัม (62 บาท)', price: 62, regPrice: 75 }
+        ]
+      },
+      letter_pkg: {
+        name: 'จดหมายธรรมดา (แบบหีบห่อ)',
+        tiers: [
+          { id: 'lp_500', label: 'ไม่เกิน 500 กรัม (34 บาท)', price: 34, regPrice: 49 },
+          { id: 'lp_1000', label: 'เกิน 500 - 1,000 กรัม (45 บาท)', price: 45, regPrice: 60 },
+          { id: 'lp_2000', label: 'เกิน 1,000 - 2,000 กรัม (62 บาท)', price: 62, regPrice: 77 }
+        ]
+      },
+      printed: {
+        name: 'ของตีพิมพ์ (สิ่งพิมพ์)',
+        tiers: [
+          { id: 'pr_50', label: 'ไม่เกิน 50 กรัม (4 บาท)', price: 4, regPrice: 17 },
+          { id: 'pr_100', label: 'เกิน 50 - 100 กรัม (5 บาท)', price: 5, regPrice: 18 },
+          { id: 'pr_250', label: 'เกิน 100 - 250 กรัม (8 บาท)', price: 8, regPrice: 21 },
+          { id: 'pr_500', label: 'เกิน 250 - 500 กรัม (11 บาท)', price: 11, regPrice: 24 },
+          { id: 'pr_1000', label: 'เกิน 500 - 1,000 กรัม (17 บาท)', price: 17, regPrice: 30 },
+          { id: 'pr_2000', label: 'เกิน 1,000 - 2,000 กรัม (33 บาท)', price: 33, regPrice: 46 },
+          { id: 'pr_over2000', label: 'เกิน 2,000 กรัม (คิด กก. ละ 16 บาท สูงสุด 5 กก.)', price: 49, regPrice: 62 }
+        ]
+      }
+    };
+
+    const STORAGE_KEY = 'thpost_central_rollpallet_records_v1';
+    let currentServiceType = 'letter_env';
+    let records = [];
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    function initApp() {
+      setNowDateTime();
+      loadRecords();
+      selectServiceType('letter_env');
+      renderHistory();
+    }
+
+    function setNowDateTime() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('job-date').value = `${yyyy}-${mm}-${dd}`;
+      document.getElementById('job-time').value = `${hh}:${min}`;
+    }
+
+    function switchTab(tab) {
+      ['form', 'history', 'rates'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tab) {
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-[#ED1C24] shadow-sm transition flex items-center gap-1.5';
+        } else {
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-red-700/60 text-white hover:bg-red-700 transition flex items-center gap-1.5';
+        }
+      });
+      if (tab === 'history') renderHistory();
+    }
+
+    function selectServiceType(type) {
+      currentServiceType = type;
+      ['letter_env', 'letter_pkg', 'printed'].forEach(t => {
+        const btn = document.getElementById(`srv-${t}`);
+        if (t === type) {
+          btn.className = 'srv-btn p-3 rounded-xl border-2 border-[#ED1C24] bg-red-500/10 text-left transition';
+        } else {
+          btn.className = 'srv-btn p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-left transition hover:border-red-400';
+        }
+      });
+
+      const select = document.getElementById('weight-tier');
+      select.innerHTML = '';
+      SERVICE_RATES[type].tiers.forEach(tier => {
+        const opt = document.createElement('option');
+        opt.value = tier.id;
+        opt.textContent = tier.label;
+        select.appendChild(opt);
+      });
+
+      onWeightTierChange();
+    }
+
+    function onWeightTierChange() {
+      const tierId = document.getElementById('weight-tier').value;
+      const isRegister = document.getElementById('addon-register').checked;
+      const tierObj = SERVICE_RATES[currentServiceType].tiers.find(t => t.id === tierId);
+      const extraKgBox = document.getElementById('extra-kg-container');
+
+      if (tierId === 'pr_over2000') {
+        extraKgBox.classList.remove('hidden');
+        const totalKg = parseInt(document.getElementById('printed-total-kg').value, 10) || 3;
+        const basePrice = 33 + (totalKg - 2) * 16;
+        document.getElementById('unit-price').value = isRegister ? (basePrice + 13) : basePrice;
+      } else {
+        extraKgBox.classList.add('hidden');
+        if (tierObj) {
+          document.getElementById('unit-price').value = isRegister ? tierObj.regPrice : tierObj.price;
+        }
+      }
+      calculateAll();
+    }
+
+    function onRegisterToggle() {
+      onWeightTierChange();
+    }
+
+    function setQuickBundle(val) {
+      document.getElementById('items-per-bundle').value = val;
+      calculateAll();
+    }
+
+    function stepValue(inputId, delta) {
+      const el = document.getElementById(inputId);
+      const current = parseInt(el.value, 10) || 0;
+      el.value = Math.max(0, current + delta);
+      calculateAll();
+    }
+
+    function getCurrentCalculation() {
+      const itemsPerBundle = Math.max(0, parseInt(document.getElementById('items-per-bundle').value, 10) || 0);
+      const bundlesPerRoll = Math.max(0, parseInt(document.getElementById('bundles-per-roll').value, 10) || 0);
+      const totalRolls = Math.max(0, parseInt(document.getElementById('total-rolls').value, 10) || 0);
+      const extraBundles = Math.max(0, parseInt(document.getElementById('extra-bundles').value, 10) || 0);
+      const looseItems = Math.max(0, parseInt(document.getElementById('loose-items').value, 10) || 0);
+      const unitPrice = Math.max(0, parseFloat(document.getElementById('unit-price').value) || 0);
+
+      const itemsPerRoll = itemsPerBundle * bundlesPerRoll;
+      const itemsFromRolls = totalRolls * itemsPerRoll;
+      const itemsFromExtraBundles = extraBundles * itemsPerBundle;
+      const totalBundles = (totalRolls * bundlesPerRoll) + extraBundles;
+      const grandTotalItems = itemsFromRolls + itemsFromExtraBundles + looseItems;
+      const grandTotalCost = grandTotalItems * unitPrice;
+
+      const tierSelect = document.getElementById('weight-tier');
+      const tierLabel = tierSelect.options[tierSelect.selectedIndex]?.text || '';
+      const isRegister = document.getElementById('addon-register').checked;
+
+      return {
+        serviceType: currentServiceType,
+        serviceName: SERVICE_RATES[currentServiceType].name + (isRegister ? ' + ลงทะเบียน' : ''),
+        tierLabel,
+        unitPrice,
+        itemsPerBundle,
+        bundlesPerRoll,
+        itemsPerRoll,
+        totalRolls,
+        extraBundles,
+        looseItems,
+        itemsFromRolls,
+        itemsFromExtraBundles,
+        totalBundles,
+        grandTotalItems,
+        grandTotalCost
+      };
+    }
+
+    function calculateAll() {
+      const c = getCurrentCalculation();
+
+      document.getElementById('items-per-roll-preview').textContent = c.itemsPerRoll.toLocaleString();
+      document.getElementById('extra-bundles-items-preview').textContent = c.itemsFromExtraBundles.toLocaleString();
+
+      document.getElementById('summary-service-title').textContent = c.serviceName;
+      document.getElementById('summary-unit-price').textContent = c.unitPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      document.getElementById('sum-rolls-txt').textContent = `${c.totalRolls} โรล × ${c.bundlesPerRoll} มัด × ${c.itemsPerBundle}`;
+      document.getElementById('sum-rolls-items').textContent = c.itemsFromRolls.toLocaleString();
+
+      document.getElementById('sum-extrabundles-txt').textContent = `${c.extraBundles} มัด × ${c.itemsPerBundle}`;
+      document.getElementById('sum-extrabundles-items').textContent = c.itemsFromExtraBundles.toLocaleString();
+
+      document.getElementById('sum-loose-items').textContent = c.looseItems.toLocaleString();
+      document.getElementById('sum-total-bundles').textContent = c.totalBundles.toLocaleString();
+      document.getElementById('sum-rem-loose').textContent = c.looseItems.toLocaleString();
+
+      document.getElementById('grand-total-items').textContent = c.grandTotalItems.toLocaleString();
+      document.getElementById('grand-total-cost').textContent = c.grandTotalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function resetFormCounts() {
+      document.getElementById('total-rolls').value = 1;
+      document.getElementById('extra-bundles').value = 0;
+      document.getElementById('loose-items').value = 0;
+      document.getElementById('job-note').value = '';
+      calculateAll();
+    }
+
+    function saveCurrentRecord() {
+      const c = getCurrentCalculation();
+      const record = {
+        id: 'JOB-' + Date.now().toString().slice(-6),
+        createdAt: new Date().toISOString(),
+        date: document.getElementById('job-date').value,
+        time: document.getElementById('job-time').value,
+        customerName: document.getElementById('customer-name').value.trim() || 'ไม่ระบุชื่อลูกค้า',
+        coordinatorName: document.getElementById('coordinator-name').value.trim() || '-',
+        receiverName: document.getElementById('receiver-name').value.trim() || '-',
+        note: document.getElementById('job-note').value.trim() || '-',
+        ...c
+      };
+
+      records.unshift(record);
+      saveRecordsToStorage();
+      updateBadge();
+
+      const toast = document.getElementById('save-toast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+
+    function loadRecords() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        records = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        records = [];
+      }
+      updateBadge();
+    }
+
+    function saveRecordsToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function updateBadge() {
+      document.getElementById('history-badge').textContent = records.length;
+    }
+
+    function renderHistory() {
+      const q = (document.getElementById('search-history')?.value || '').toLowerCase().trim();
+      const filtered = records.filter(r => {
+        if (!q) return true;
+        return (
+          (r.customerName || '').toLowerCase().includes(q) ||
+          (r.coordinatorName || '').toLowerCase().includes(q) ||
+          (r.receiverName || '').toLowerCase().includes(q) ||
+          (r.note || '').toLowerCase().includes(q) ||
+          (r.serviceName || '').toLowerCase().includes(q)
+        );
+      });
+
+      let totalRolls = 0, totalItems = 0, totalCost = 0;
+      filtered.forEach(r => {
+        totalRolls += (r.totalRolls || 0);
+        totalItems += (r.grandTotalItems || 0);
+        totalCost += (r.grandTotalCost || 0);
+      });
+
+      document.getElementById('hist-stat-count').textContent = filtered.length.toLocaleString();
+      document.getElementById('hist-stat-rolls').textContent = totalRolls.toLocaleString();
+      document.getElementById('hist-stat-items').textContent = totalItems.toLocaleString();
+      document.getElementById('hist-stat-cost').textContent = totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      const listEl = document.getElementById('history-list');
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="text-center py-12 border border-dashed border-[var(--border)] rounded-xl text-[var(--muted-foreground)] text-sm">
+            ยังไม่มีรายการบันทึกงานในเครื่อง หรือไม่พบข้อมูลที่ค้นหา
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(r => `
+        <div class="p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] flex flex-col sm:flex-row justify-between gap-4 hover:border-red-500/40 transition">
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-[#ED1C24] text-white text-xs font-bold">${r.id}</span>
+              <span class="text-xs font-semibold text-[var(--muted-foreground)]">📅 ${r.date} ⏰ ${r.time} น.</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/10 text-[#ED1C24] text-xs font-semibold">${r.serviceName}</span>
+            </div>
+            <div class="font-bold text-base">${escapeHtml(r.customerName)}</div>
+            <div class="text-xs text-[var(--muted-foreground)] flex flex-wrap gap-x-4 gap-y-1">
+              <span>👤 ผู้ประสานงาน: <strong class="text-[var(--foreground)]">${escapeHtml(r.coordinatorName)}</strong></span>
+              <span>🏢 ผู้รับงาน (ปณ.กลาง): <strong class="text-[var(--foreground)]">${escapeHtml(r.receiverName)}</strong></span>
+              <span>⚖️ พิกัด: <strong class="text-[var(--foreground)]">${escapeHtml(r.tierLabel)}</strong></span>
+            </div>
+            <div class="text-xs bg-[var(--card)] px-3 py-1.5 rounded-lg border border-[var(--border)] inline-block">
+              📦 <strong>${r.totalRolls}</strong> โรล (${r.bundlesPerRoll} มัด/โรล × ${r.itemsPerBundle} ฉบับ)
+              + เศษมัด <strong>${r.extraBundles}</strong> มัด
+              + เศษปลีก <strong>${r.looseItems}</strong> ฉบับ
+            </div>
+            ${r.note && r.note !== '-' ? `<div class="text-xs text-[var(--muted-foreground)]">📝 หมายเหตุ: ${escapeHtml(r.note)}</div>` : ''}
+          </div>
+
+          <div class="flex sm:flex-col justify-between items-end gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-[var(--border)] min-w-[160px]">
+            <div class="text-right">
+              <div class="text-xs text-[var(--muted-foreground)]">รวม ${r.grandTotalItems.toLocaleString()} ฉบับ (ชิ้นละ ${r.unitPrice} ฿)</div>
+              <div class="text-xl font-black text-[#ED1C24]">${r.grandTotalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button onclick="printRecordById('${r.id}')" class="px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-red-500/10 text-xs font-semibold">พิมพ์ใบสรุป</button>
+              <button onclick="deleteRecord('${r.id}')" class="px-2.5 py-1 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 text-xs font-semibold">ลบ</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteRecord(id) {
+      records = records.filter(r => r.id !== id);
+      saveRecordsToStorage();
+      updateBadge();
+      renderHistory();
+    }
+
+    function clearAllHistory() {
+      if (!confirm('ต้องการล้างประวัติการรับงานทั้งหมดในเครื่องใช่หรือไม่?')) return;
+      records = [];
+      saveRecordsToStorage();
+      updateBadge();
+      renderHistory();
+    }
+
+    function previewCurrentSlip() {
+      const c = getCurrentCalculation();
+      const tempRecord = {
+        id: 'DRAFT',
+        date: document.getElementById('job-date').value,
+        time: document.getElementById('job-time').value,
+        customerName: document.getElementById('customer-name').value.trim() || 'ไม่ระบุชื่อลูกค้า',
+        coordinatorName: document.getElementById('coordinator-name').value.trim() || '-',
+        receiverName: document.getElementById('receiver-name').value.trim() || '-',
+        note: document.getElementById('job-note').value.trim() || '-',
+        ...c
+      };
+      openSlipModal(tempRecord);
+    }
+
+    function printRecordById(id) {
+      const rec = records.find(r => r.id === id);
+      if (rec) openSlipModal(rec);
+    }
+
+    function openSlipModal(r) {
+      document.getElementById('slip-datetime').textContent = `วันที่ ${r.date} เวลา ${r.time} น.`;
+      document.getElementById('slip-id').textContent = `เลขที่รายการ: ${r.id}`;
+      document.getElementById('slip-sign-coord').textContent = `(${r.coordinatorName})`;
+      document.getElementById('slip-sign-recv').textContent = `(${r.receiverName})`;
+
+      document.getElementById('slip-body').innerHTML = `
+        <div class="grid grid-cols-2 gap-2 bg-gray-100 p-3 rounded-lg text-xs">
+          <div><span class="text-gray-500">ลูกค้า/หน่วยงาน:</span> <strong class="block text-sm">${escapeHtml(r.customerName)}</strong></div>
+          <div><span class="text-gray-500">ประเภทบริการ:</span> <strong class="block text-sm">${escapeHtml(r.serviceName)}</strong></div>
+          <div><span class="text-gray-500">ผู้ประสานงาน:</span> <strong>${escapeHtml(r.coordinatorName)}</strong></div>
+          <div><span class="text-gray-500">ผู้รับงาน (ปณ.กลาง):</span> <strong>${escapeHtml(r.receiverName)}</strong></div>
+          <div class="col-span-2"><span class="text-gray-500">พิกัดน้ำหนัก:</span> <strong>${escapeHtml(r.tierLabel)} (ชิ้นละ ${r.unitPrice.toFixed(2)} บาท)</strong></div>
+        </div>
+
+        <table class="w-full text-xs border-collapse border border-gray-300 mt-2">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border border-gray-300 p-2 text-left">รายการนับบน Roll Pallet</th>
+              <th class="border border-gray-300 p-2 text-right">วิธีคำนวณ</th>
+              <th class="border border-gray-300 p-2 text-right">จำนวน (ฉบับ)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-gray-300 p-2">จำนวนโรลเต็ม (${r.totalRolls} โรล)</td>
+              <td class="border border-gray-300 p-2 text-right">${r.totalRolls} โรล × ${r.bundlesPerRoll} มัด × ${r.itemsPerBundle} ฉบับ</td>
+              <td class="border border-gray-300 p-2 text-right font-bold">${r.itemsFromRolls.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 p-2">เศษมัด (${r.extraBundles} มัด)</td>
+              <td class="border border-gray-300 p-2 text-right">${r.extraBundles} มัด × ${r.itemsPerBundle} ฉบับ</td>
+              <td class="border border-gray-300 p-2 text-right font-bold">${r.itemsFromExtraBundles.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 p-2">เศษฉบับปลีก</td>
+              <td class="border border-gray-300 p-2 text-right">นับแยกชิ้น</td>
+              <td class="border border-gray-300 p-2 text-right font-bold">${r.looseItems.toLocaleString()}</td>
+            </tr>
+            <tr class="bg-gray-100 font-bold text-sm">
+              <td class="border border-gray-300 p-2" colspan="2">รวมจำนวนไปรษณีย์ภัณฑ์ทั้งสิ้น (รวม ${r.totalBundles.toLocaleString()} มัด กับเศษ ${r.looseItems} ฉบับ)</td>
+              <td class="border border-gray-300 p-2 text-right text-red-600">${r.grandTotalItems.toLocaleString()} ฉบับ</td>
+            </tr>
+            <tr class="bg-red-50 font-black text-base">
+              <td class="border border-gray-300 p-2" colspan="2">รวมเป็นเงินค่าบริการทั้งสิ้น</td>
+              <td class="border border-gray-300 p-2 text-right text-red-600">${r.grandTotalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="text-xs text-gray-700 mt-2">
+          <strong>หมายเหตุ:</strong> ${escapeHtml(r.note)}
+        </div>
+      `;
+
+      document.getElementById('print-modal').classList.remove('hidden');
+    }
+
+    function closeSlipModal() {
+      document.getElementById('print-modal').classList.add('hidden');
+    }
+
+    function exportCSV() {
+      if (records.length === 0) {
+        alert('ยังไม่มีข้อมูลสำหรับส่งออก');
+        return;
+      }
+      const headers = [
+        'รหัสรายการ', 'วันที่', 'เวลา', 'ชื่อลูกค้า/บริษัท', 'ผู้ประสานงาน', 'ผู้รับงาน(ปณ.กลาง)',
+        'ประเภทบริการ', 'พิกัดน้ำหนัก', 'ราคาต่อชิ้น(บาท)',
+        'ฉบับต่อมัด', 'มัดต่อโรล', 'จำนวนโรลเต็ม', 'เศษมัด', 'เศษฉบับปลีก',
+        'รวมจำนวนฉบับทั้งสิ้น', 'รวมค่าบริการ(บาท)', 'หมายเหตุ'
+      ];
+
+      const rows = records.map(r => [
+        r.id, r.date, r.time, `"${(r.customerName || '').replace(/"/g, '""')}"`,
+        `"${(r.coordinatorName || '').replace(/"/g, '""')}"`,
+        `"${(r.receiverName || '').replace(/"/g, '""')}"`,
+        `"${(r.serviceName || '').replace(/"/g, '""')}"`,
+        `"${(r.tierLabel || '').replace(/"/g, '""')}"`,
+        r.unitPrice, r.itemsPerBundle, r.bundlesPerRoll, r.totalRolls, r.extraBundles, r.looseItems,
+        r.grandTotalItems, r.grandTotalCost.toFixed(2),
+        `"${(r.note || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `บันทึกการรับงาน_ปณกลาง_${document.getElementById('job-date').value}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
