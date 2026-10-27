@@ -38,7 +38,7 @@
     }
   </style>
 </head>
-<body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen pb-28 transition-colors duration-200">
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen pb-36 transition-colors duration-200">
 
   <!-- Header Banner -->
   <header class="bg-[#ED1C24] text-white shadow-md sticky top-0 z-20 no-print">
@@ -556,28 +556,29 @@
   </main>
 
   <!-- FLOATING STICKY BOTTOM SUMMARY BAR (เลื่อนขึ้นลงตามหน้าจออยู่ด้านล่างเสมอ) -->
-  <div id="floating-bottom-bar" class="fixed bottom-0 left-0 right-0 z-30 bg-[#ED1C24] text-white shadow-[0_-4px_20px_rgba(0,0,0,0.25)] border-t border-red-400/40 no-print">
-    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-2">
+  <div id="floating-bottom-bar" class="fixed bottom-0 left-0 right-0 z-30 bg-[#ED1C24] text-white shadow-[0_-6px_25px_rgba(0,0,0,0.3)] border-t-2 border-white/25 no-print">
+    <div class="max-w-6xl mx-auto px-3.5 sm:px-5 py-3 flex items-center justify-between gap-3">
       <div onclick="document.getElementById('summary-section').scrollIntoView({behavior:'smooth'})" class="cursor-pointer flex-1 min-w-0">
-        <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-red-100">
-          <span class="font-semibold bg-black/20 px-2 py-0.5 rounded"><span id="float-pallets">0</span> พาเลท | <span id="float-bundles">0</span> มัด (เศษ <span id="float-loose">0</span>)</span>
-          <span class="hidden sm:inline">• แตะเพื่อดูรายละเอียดสรุป</span>
+        <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-bold text-white mb-1">
+          <span class="bg-black/25 px-2.5 py-0.5 rounded-md border border-white/15">
+            📦 <span id="float-pallets">0</span> พาเลท • <span id="float-bundles">0</span> มัด (เศษ <span id="float-loose">0</span>)
+          </span>
         </div>
-        <div class="flex items-baseline gap-3 mt-0.5">
-          <div class="text-base sm:text-xl font-black truncate">
-            รวม <span id="float-total-items">0</span> <span class="text-xs font-normal">ฉบับ</span>
+        <div class="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 leading-tight">
+          <div class="text-xl sm:text-2xl font-black tracking-tight">
+            รวม <span id="float-total-items">0</span> <span class="text-xs sm:text-sm font-semibold text-red-100">ฉบับ</span>
           </div>
-          <div class="text-lg sm:text-2xl font-black text-yellow-300 truncate">
-            <span id="float-total-cost">0.00</span> <span class="text-xs font-normal text-white">บาท</span>
+          <div class="text-2xl sm:text-3xl font-black text-yellow-300 tracking-tight drop-shadow-sm">
+            <span id="float-total-cost">0.00</span> <span class="text-xs sm:text-sm font-bold text-white">฿</span>
           </div>
         </div>
       </div>
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="saveCurrentRecord()" class="px-3.5 py-2 rounded-xl bg-white text-[#ED1C24] hover:bg-red-50 font-black text-xs sm:text-sm shadow-md transition flex items-center gap-1">
-          <span>💾 บันทึก</span>
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="saveCurrentRecord()" title="บันทึกรายการรับงาน" aria-label="บันทึกรายการรับงาน" class="w-12 h-12 rounded-2xl bg-white text-[#ED1C24] hover:bg-red-50 active:scale-95 shadow-lg transition flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
         </button>
-        <button type="button" onclick="previewCurrentSlip()" class="px-2.5 py-2 rounded-xl bg-red-800/80 hover:bg-red-900 text-white font-semibold text-xs sm:text-sm transition">
-          🖨️ พิมพ์
+        <button type="button" onclick="previewCurrentSlip()" title="พิมพ์ใบสรุปรับงาน" aria-label="พิมพ์ใบสรุปรับงาน" class="w-12 h-12 rounded-2xl bg-red-800/90 hover:bg-red-900 active:scale-95 border border-white/20 text-white shadow-md transition flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
         </button>
       </div>
     </div>
